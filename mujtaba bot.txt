@@ -1,0 +1,28 @@
+import discord
+import asyncio
+
+client = discord.Client()
+
+@client.event
+async def on_ready():
+    print('Logged in as {0.user}'.format(client))
+
+@client.event
+async def on_message(message):
+    if message.content.startswith('$$mujtaba'):
+        args = message.content.split()[1:]
+        if len(args) == 3:
+            command, coin, time_spec = args
+            interval, duration = time_spec.split(':')
+            duration_secs = int(duration[:-1]) * 60 * 60 # Convert hours to seconds
+            interval_secs = int(interval[2:-1]) * 60 # Convert minutes to seconds
+            initial_message = f"Starting continuous chart updates for {command} {coin} {interval} in this channel. Duration: {duration}, Time interval: {interval}."
+            await message.channel.send(initial_message)
+            while duration_secs > 0:
+                # TODO: Get chart data using command, coin, and interval
+                # TODO: Send chart data as a message to the Discord channel
+                await asyncio.sleep(interval_secs)
+                duration_secs -= interval_secs
+            await message.channel.send("Continuous chart updates finished.")
+
+client.run('DISCORD_TOKEN')
